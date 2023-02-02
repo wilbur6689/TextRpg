@@ -13,10 +13,10 @@ public class GameLogic {
 
     public static boolean isRunning;
 
-    // Random Encounters
+    // Default random Encounters for first act
     public static String[] encounters = {"Battle", "Battle", "Battle", "Rest", "Rest"};
 
-    // Enemy Names
+    // Default enemy Names for first act
     public static String[] enemies = {"Ogre", "Ogre", "Goblin", "Goblin", "Stone Elemental"};
 
     // Story elements
