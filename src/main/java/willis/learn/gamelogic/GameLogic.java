@@ -1,5 +1,6 @@
 package willis.learn.gamelogic;
 
+import willis.learn.characters.Enemy;
 import willis.learn.characters.Player;
 import willis.learn.story.MainStory;
 
@@ -12,10 +13,10 @@ public class GameLogic {
 
     public static boolean isRunning;
 
-    // Random Encounters
+    // Default random Encounters for first act
     public static String[] encounters = {"Battle", "Battle", "Battle", "Rest", "Rest"};
 
-    // Enemy Names
+    // Default enemy Names for first act
     public static String[] enemies = {"Ogre", "Ogre", "Goblin", "Goblin", "Stone Elemental"};
 
     // Story elements
@@ -132,16 +133,17 @@ public class GameLogic {
 
         // Calling the respective methods
         if (encounters[encounter].equals("Battle")){
-            // randomBattle();
+            randomBattle();
         } else if (encounters[encounter].equals("Rest")) {
-            // takeRest();
+            //takeRest();
         } else {
-            // Shop();
+            //Shop();
         }
     }
 
     static void checkAct() {
         // Change acts based on XP
+        // Check to see if the game needs to increase the act to II
         if (player.xp >= 10 && act == 1) {
             // Increment act and palace
             act = 2;
@@ -169,6 +171,8 @@ public class GameLogic {
             encounters[2] = "Battle";
             encounters[3] = "Rest";
             encounters[4] = "Shop";
+
+        // Check to see if the game needs to increase the act to III
         } else if (player.xp >= 50 && act == 2) {
             // Increment act and palace
             act = 3;
@@ -198,6 +202,8 @@ public class GameLogic {
 
             // Fully heal the Player
             player.hp = player.maxHp;
+
+        // Check to see if the game needs to increase the act to the final act
         } else if (player.xp >= 100 && act == 3) {
             // Increment act and palace
             act = 4;
@@ -249,6 +255,113 @@ public class GameLogic {
         }
 
         promptEnterKey();
+    }
+
+    // Creating a random Battle
+    public static void randomBattle() {
+        clearConsole();
+        printHeading("You have encountered an evil minded creature. You'll have to fight it!");
+        promptEnterKey();
+
+        // Create new enemy with random name
+        battle(new Enemy(enemies[(int)(Math.random()*enemies.length)], player.xp));
+    }
+
+    // The main BATTLE method
+    public static void battle(Enemy enemy) {
+        // Main battle loop
+        while(true) {
+            clearConsole();
+            printHeading(enemy.name + "\nHP: " + enemy.hp + "/" + enemy.maxHp);
+            printHeading(player.name + "\nHP: " + player.hp + "/" + player.maxHp);
+            System.out.println("Choose an action to perform:");
+            printSeparator(20);
+            System.out.println("(1) Fight\n(2) Use Potion\n(3) Run Away");
+            int input = readInt("-> ", 3);
+
+            if (input == 1) {
+                // Fight
+                // Calculate dmg and dmgTook (dmg enemy deals to player)
+                int dmg = player.attack() - enemy.defend();
+                int dmgTook = enemy.attack() - player.defend();
+
+                // Check that dmg and dmgTook isn't negative
+                if(dmgTook < 0) {
+                    // add some dmg if player defends very well
+                    dmg -= dmgTook/2;
+                    dmgTook = 0;
+                }
+                if(dmg < 0) {
+                    dmg =0;
+                }
+
+                // Deal damage to both parties
+                player.hp -= dmgTook;
+                enemy.hp -= dmg;
+
+                // Print the info of this battle round
+                clearConsole();
+                printHeading("BATTLE");
+                System.out.println("You Delt " + dmg + " damage to the " + enemy.name + ".");
+                printSeparator(15);
+                System.out.println("The " + enemy.name + " dealt " + dmgTook + " damage to you.");
+                promptEnterKey();
+
+                // Check to see if player is still alive
+                if (player.hp <= 0) {
+                    playerDied(); // Method to end the game
+                    break;
+                } else if (enemy.hp <= 0 ) {
+                    // Tell the player he won
+                    clearConsole();
+                    printHeading("You Defeated the " + enemy.name + "!");
+
+                    // Increase the player XP
+                    player.xp += enemy.xp;
+                    System.out.println("You earned " + enemy.xp + " XP!");
+                    promptEnterKey();
+                    break;
+                }
+            } else if (input == 2) {
+                // USE A POTION
+
+            } else {
+                // RUN AWAY
+                clearConsole();
+
+                if (act != 4) {
+                    // Chance of 35% to escape
+                    if (Math.random()*10 + 1 <= 3.5) {
+                        printHeading("You ran away from the " + enemy.name + "!");
+                        promptEnterKey();
+                        break;
+                    } else {
+                        // Calculate damage to player
+                        printHeading("You didn't manage to escape, get back to the fight!");
+                        int dmgTook = enemy.attack();
+                        System.out.println("In your hurry you took " + dmgTook + " damage!");
+                        promptEnterKey();
+
+                        // Check if player's still alive
+                        if(player.hp <= 0) {
+                            playerDied(); // Method to end the game
+                        }
+                    }
+                } else {
+                    printHeading("YOU CANNOT ESCAPE THE EVIL WARLORD!!!");
+                    promptEnterKey();
+                }
+            }
+
+        }
+    }
+
+    private static void playerDied() {
+        clearConsole();
+        printHeading("You died.....");
+        printHeading("You Earned " + player.xp + " XP on your journey. Try to earn more next time!");
+        System.out.println("Thank you for player this game!");
+        isRunning = false;
     }
 
     private static void gameLoop() {

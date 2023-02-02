@@ -9,7 +9,7 @@ public class Player extends Character {
 
     // Arrays to store skill names
     public String[] atkUpgrades = {"Strength", "Power", "Might", "Godlike Strength"};
-    public String[] defUpgrades = {"Heavy Bones", "StoneSkin", "Scale Armor", "Holy Aura"};
+    public String[] defUpgrades = {"StoneSkin", "Heavy Bones", "Scale Armor", "Holy Aura"};
 
     // Player Specific constructor
     public Player(String name) {
@@ -26,12 +26,12 @@ public class Player extends Character {
 
     @Override
     public int attack() {
-        return 0;
+        return (int) (Math.random()*(xp/4 + numAtkUpgrades*3 + 3) + xp/10 + numAtkUpgrades*2 + numDefUpgrades + 1);
     }
 
     @Override
     public int defend() {
-        return 0;
+        return (int) (Math.random()*(xp/4 + numDefUpgrades*3 + 3) + xp/10 + numDefUpgrades*2 + numAtkUpgrades + 1);
     }
 
     // Let the player choose a trait of either skill path
