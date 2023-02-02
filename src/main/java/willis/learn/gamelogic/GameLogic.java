@@ -115,7 +115,6 @@ public class GameLogic {
     }
 
     // Method to continue the journey
-
     private static void continueJourney() {
         // check if act must be increased
         checkAct();
@@ -124,8 +123,6 @@ public class GameLogic {
         if (act != 4) {
             randomEncounter();
         }
-
-
     }
 
     // Method to calculate a random encounter
