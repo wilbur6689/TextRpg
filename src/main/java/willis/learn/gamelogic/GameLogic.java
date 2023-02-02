@@ -12,16 +12,22 @@ public class GameLogic {
 
     public static boolean isRunning;
 
+    // Random Encounters
+    public static String[] encounters = {"Battle", "Battle", "Battle", "Rest", "Rest"};
+
+    // Enemy Names
+    public static String[] enemies = {"Ogre", "Ogre", "Goblin", "Goblin", "Stone Elemental"};
+
     // Story elements
-    public static int place = 0, act;
+    public static int place = 0, act = 1;
     public static String[] places = {"Everlasting Mountains", "Haunted Forest", "Castle of the Evil Warlord", "Throne Room"};
 
     // method to get user input from console
-    public static int readInt(String promt, int userChoices){
+    public static int readInt(String prompt, int userChoices){
         int input;
 
         do {
-            System.out.println(promt);
+            System.out.println(prompt);
             try{
                 input =  Integer.parseInt(scanner.next());
             } catch(Exception e) {
@@ -109,12 +115,110 @@ public class GameLogic {
     }
 
     // Method to continue the journey
-
     private static void continueJourney() {
+        // check if act must be increased
+        checkAct();
 
+        // Check if game isn't in last act
+        if (act != 4) {
+            randomEncounter();
+        }
     }
-    // Method to print the main menu
 
+    // Method to calculate a random encounter
+    public static void randomEncounter() {
+        // Random Number between 0 and the length of the encounters array
+        int encounter = (int) (Math.random()* encounters.length);
+
+        // Calling the respective methods
+        if (encounters[encounter].equals("Battle")){
+            // randomBattle();
+        } else if (encounters[encounter].equals("Rest")) {
+            // takeRest();
+        } else {
+            // Shop();
+        }
+    }
+
+    static void checkAct() {
+        // Change acts based on XP
+        if (player.xp >= 10 && act == 1) {
+            // Increment act and palace
+            act = 2;
+            place = 1;
+
+            // Story
+            MainStory.printFirstActOutro();
+
+            // Let the player "Level up"
+            player.chooseTrait();
+
+            // Story
+            MainStory.printSecondActIntro();
+
+            // Assign new Values to Enemies
+            enemies[0] = "Evil Mercenary";
+            enemies[1] = "Goblin";
+            enemies[2] = "Wolf Pack";
+            enemies[3] = "Henchman of Warlord";
+            enemies[4] = "Scary Stranger";
+
+            // Assign new values to encounters
+            encounters[0] = "Battle";
+            encounters[1] = "Battle";
+            encounters[2] = "Battle";
+            encounters[3] = "Rest";
+            encounters[4] = "Shop";
+        } else if (player.xp >= 50 && act == 2) {
+            // Increment act and palace
+            act = 3;
+            place = 2;
+
+            // Story
+            MainStory.printSecondActOutro();
+
+            // Let the player "Level up"
+            player.chooseTrait();
+
+            // Story
+            MainStory.printThirdActIntro();
+            // Assign new Values to Enemies
+            enemies[0] = "Evil Mercenary";
+            enemies[1] = "Goblin";
+            enemies[2] = "Wolf Pack";
+            enemies[3] = "Henchman of Warlord";
+            enemies[4] = "Scary Stranger";
+
+            // Assign new values to encounters
+            encounters[0] = "Battle";
+            encounters[1] = "Battle";
+            encounters[2] = "Battle";
+            encounters[3] = "Battle";
+            encounters[4] = "Shop";
+
+            // Fully heal the Player
+            player.hp = player.maxHp;
+        } else if (player.xp >= 100 && act == 3) {
+            // Increment act and palace
+            act = 4;
+            place = 3;
+
+            // Story
+            MainStory.printThirdActOutro();
+
+            // Let the player "Level up"
+            player.chooseTrait();
+
+            // Story
+            MainStory.printFinalActIntro();
+            // Fully heal the Player
+            player.hp = player.maxHp;
+            // Calling the final Battle
+            //finalBattle();
+        }
+    }
+
+    // Method to print the main menu
     private static void printMenu() {
         clearConsole();
         printHeading(places[place]);
