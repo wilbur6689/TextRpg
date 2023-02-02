@@ -1,6 +1,7 @@
 package willis.learn.gamelogic;
 
 import willis.learn.characters.Player;
+import willis.learn.story.MainStory;
 
 import java.util.Scanner;
 
@@ -8,6 +9,12 @@ public class GameLogic {
     static Scanner scanner = new Scanner(System.in);
 
     static Player player;
+
+    public static boolean isRunning;
+
+    // Story elements
+    public static int place = 0, act;
+    public static String[] places = {"Everlasting Mountains", "Haunted Forest", "Castle of the Evil Warlord", "Throne Room"};
 
     // method to get user input from console
     public static int readInt(String promt, int userChoices){
@@ -45,12 +52,6 @@ public class GameLogic {
         printSeparator(30);
         System.out.println(title);
         printSeparator(30);
-    }
-
-    // Method to stop the game until user enters anything
-    public static void anythingToContinue(){
-        System.out.println("\nEnter anything to continue...");
-        scanner.next();
     }
 
     public static void promptEnterKey(){
@@ -91,10 +92,72 @@ public class GameLogic {
             }
         }while(!nameSet);
 
+        // Print the story intro
+        MainStory.printMainIntro();
+
         // Create a new player object with the name
         player = new Player(name);
 
+        // Print first story act intro
+        MainStory.printFirstActIntro();
+
+        //  Setting isRunning to True, so the game loop can continue
+        isRunning = true;
+
         // Start main game loop (Next part)
-        // gameLoop();
+        gameLoop();
+    }
+
+    // Method to continue the journey
+
+    private static void continueJourney() {
+
+    }
+    // Method to print the main menu
+
+    private static void printMenu() {
+        clearConsole();
+        printHeading(places[place]);
+        System.out.println("Choose an Action to perform:");
+        printSeparator(20);
+        System.out.println("(1) Continue on your journey");
+        System.out.println("(2) Character Info");
+        System.out.println("(3) Exit Game");
+    }
+
+    private static void characterInfo() {
+        clearConsole();
+        printHeading("CHARACTER INFORMATION");
+        System.out.println(player.name + "\tHP: " + player.hp + "/" + player.maxHp);
+        printSeparator(20);
+        System.out.println("XP: " + player.xp);
+        printSeparator(20);
+
+
+        // printing the chosen traits
+        if(player.numAtkUpgrades > 0) {
+            System.out.println("Offensive trait: " + player.atkUpgrades[player.numAtkUpgrades -1]);
+            printSeparator(20);
+        }
+        if(player.numDefUpgrades > 0) {
+            System.out.println("Defensive trait: " + player.defUpgrades[player.numDefUpgrades -1]);
+            printSeparator(20);
+        }
+
+        promptEnterKey();
+    }
+
+    private static void gameLoop() {
+        while(isRunning) {
+            printMenu();
+            int input = readInt("-> ", 3);
+            if (input == 1) {
+                continueJourney();
+            } else if (input == 2) {
+                characterInfo();
+            } else {
+                isRunning = false;
+            }
+        }
     }
 }
